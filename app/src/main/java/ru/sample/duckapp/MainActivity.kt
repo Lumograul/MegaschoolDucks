@@ -1,12 +1,9 @@
 package ru.sample.duckapp
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -23,20 +20,6 @@ import retrofit2.Response
 import ru.sample.duckapp.domain.Duck
 import ru.sample.duckapp.infra.Api
 import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.util.regex.Pattern
-
-
-class HttpCodeInputFilter : InputFilter {
-
-    private val pattern: Pattern = Pattern.compile("^\\d{3}$")
-
-    override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
-        val input = (dest?.subSequence(0, dstart).toString() + source?.subSequence(start, end).toString()
-                + dest?.subSequence(dend, dest.length).toString())
-        return if (pattern.matcher(input).matches()) null else ""
-    }
-}
 
 fun isValid(input: String): Boolean {
     return input.matches("^(|100|101|102|103|200|201|202|203|204|205|206|207|208|226|300|301|302|303|304|305|306|307|308|400|401|402|403|404|405|406|407|408|409|410|411|412|413|414|415|416|417|418|421|422|423|424|425|426|428|429|431|451|500|501|502|503|504|505|506|507|508|510|511)".toRegex())
@@ -51,7 +34,6 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val duck = response.body()
                     duck?.let {
-                        // Загружаем изображение утки с помощью Picasso и отображаем его в ImageView
                         Picasso.get().load(it.url).fit().centerInside().into(duckImageView)
                     }
                 } else {
@@ -73,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         duckImageView = findViewById(R.id.imageView)
 
         val duckCodeEditText = findViewById<EditText>(R.id.textInputEditText)
-        //duckCodeEditText.filters = arrayOf(HttpCodeInputFilter())
         duckCodeEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (isValid(s.toString())) {
